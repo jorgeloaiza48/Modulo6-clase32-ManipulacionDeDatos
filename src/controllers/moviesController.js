@@ -13,7 +13,8 @@ const moviesController = {
     },
     'detail': (req, res) => {
         db.Movie.findByPk(req.params.id)
-            .then(movie => {
+         .then(movie => {
+                
                 res.render('moviesDetail.ejs', {movie});
             });
     },
@@ -45,6 +46,7 @@ const moviesController = {
         res.render("moviesAdd")
        },            
     create: function (req, res) {
+        console.log("Esta es la fecha " + req.body.release_date)
         const {title, rating, awards, release_date, length} = req.body;
         db.Movie.create({
             title,
@@ -63,10 +65,22 @@ const moviesController = {
     edit: function(req, res) {
         db.Movie.findByPk(req.params.id)
         .then(Movie => {
-            res.render('moviesEdit', {Movie});
+            let year = Movie.release_date.getFullYear() 
+            let mes = (Movie.release_date.getMonth()+ 1) 
+            let dia = Movie.release_date.getDate() 
+            if(mes < 10){mes = "0" + mes}
+
+            if(dia < 10){dia = "0" + dia }
+            
+            let fechaCorta = year + "-" + mes + "-" + dia    
+            console.log(fechaCorta)                   
+            res.render('moviesEdit', {Movie,fechaCorta});
         });
     },
     update : (req,res) =>{
+        console.log("este es el body",req.body)
+        console.log("este es params",req.params)
+
         db.Movie.update(
             {
                 title : req.body.title,
@@ -87,13 +101,25 @@ const moviesController = {
             })
         
             },
-    delete: function (req, res) {
-        // TODO
-    },
-    destroy: function (req, res) {
-        // TODO
-    }
-
+            delete: function (req, res) {
+                db.Movie.findByPk(req.params.id)
+                    .then(Movie => {
+                        res.render('moviesDelete.ejs', {Movie});
+                    });
+            },
+            destroy: function (req, res) {
+                db.Movie.destroy({
+                    where: {
+                        id: req.params.id
+                    }
+                })
+                .then(()=>{
+                    res.redirect("/movies")
+                })
+                .catch((error) =>{ console.log(error)})
+                
+            }
+        
 }
 
 module.exports = moviesController;

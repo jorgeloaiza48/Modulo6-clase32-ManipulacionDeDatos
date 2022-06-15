@@ -68,8 +68,8 @@ const moviesController = {
             let year = Movie.release_date.getFullYear() 
             let mes = (Movie.release_date.getMonth()+ 1) 
             let dia = Movie.release_date.getDate() 
-            if(mes < 10){mes = "0" + mes}
 
+            if(mes < 10){mes = "0" + mes}
             if(dia < 10){dia = "0" + dia }
             
             let fechaCorta = year + "-" + mes + "-" + dia    
